@@ -4,19 +4,19 @@ import java.util.List;
 
 public abstract class MazeSolver {
 
-	protected int[] map;
+    protected int[] map;
 
-	protected int pacmanPosition;
+    protected int pacmanPosition;
 
-	//.... function of finding the next step
+    //.... function of finding the next step
 
-	protected int candyPosition;
+    protected int candyPosition;
 
-	protected int cost;
+    protected int cost;
 
-	public abstract List<Integer> solve();
+    public abstract List<Integer> solve();
 
-	public int getCost() {
-		return cost;
-	}
+    public int getCost() {
+        return cost;
+    }
 }
