@@ -149,7 +149,8 @@ public class Board extends JPanel implements ActionListener {
             movePacman();
             drawPacman(g2d);
             //moveGhosts(g2d);
-            checkMaze();
+
+            //checkMaze(); // maybe will use later
         }
     }
 
