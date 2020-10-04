@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -87,9 +88,19 @@ public class Board extends JPanel implements ActionListener {
         loadImages();
         initVariables();
         initBoard();
+
         if (inGame) {
             initGame();
         }
+    }
+
+    private void placeRandomCandy() {
+        int pos = ThreadLocalRandom.current().nextInt(N_BLOCKS * N_BLOCKS);
+
+        while((screenData[pos] & 32) != 0) {
+            pos = ThreadLocalRandom.current().nextInt(N_BLOCKS * N_BLOCKS);
+        }
+        screenData[pos] = (short) (screenData[pos] | 16);
     }
 
     private void initBoard() {
@@ -437,24 +448,19 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public boolean canMoveUp(int pos) {
-        // actually it isn't safe, because we don't check index out of bound,
-        // but the map is hardcoded, so...
-        return (screenData[pos - N_BLOCKS] & 8) == 0;
+        return (pos / N_BLOCKS >= 1) && (screenData[pos - N_BLOCKS] & 32) == 0;
     }
 
     public boolean canMoveDown(int pos) {
-        // same
-        return (screenData[pos + N_BLOCKS] & 2) == 0;
+        return (pos / N_BLOCKS <= N_BLOCKS - 2) && (screenData[pos + N_BLOCKS] & 32) == 0;
     }
 
     public boolean canMoveLeft(int pos) {
-        // ...
-        return (screenData[pos - 1] & 4) == 0;
+        return (pos % N_BLOCKS >= 1) && (screenData[pos - 1] & 32) == 0;
     }
 
     public boolean canMoveRight(int pos) {
-        // just like in any other canMove* method
-        return (screenData[pos + 1] & 1) == 0;
+        return (pos % N_BLOCKS <= N_BLOCKS - 2) && (screenData[pos + 1] & 32) == 0;
     }
 
     private void drawMaze(Graphics2D g2d) {
