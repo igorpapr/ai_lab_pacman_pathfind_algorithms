@@ -5,14 +5,17 @@ import java.awt.*;
 
 public class Pacman extends JFrame {
 
-    public Pacman() {
+    private final boolean withoutIntroScreen;
+
+    public Pacman(boolean withoutIntroScreen) {
+        this.withoutIntroScreen = withoutIntroScreen;
 
         initUI();
     }
 
     private void initUI() {
 
-        add(new Board());
+        add(new Board(withoutIntroScreen));
 
         setTitle("Pacman Best Algorithm Find Path to KONFETA");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -21,10 +24,9 @@ public class Pacman extends JFrame {
     }
 
     public static void main(String[] args) {
-
         EventQueue.invokeLater(() -> {
 
-            var ex = new Pacman();
+            var ex = new Pacman(false);
             ex.setVisible(true);
         });
     }

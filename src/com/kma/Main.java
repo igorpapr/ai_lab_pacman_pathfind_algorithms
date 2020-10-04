@@ -1,11 +1,16 @@
 package com.kma;
 
+import com.zetcode.Pacman;
+
+import java.awt.*;
+
 public class Main {
 
 	public static void main(String[] args) {
-		//MazeSolver mazeSolver = new BFSMazeSolver();
-		//MazeSolver mazeSolver = new DFSMazeSolver();
-		//MazeSolver mazeSolver = new UCSMazeSolver();
+		EventQueue.invokeLater(() -> {
 
+			var ex = new Pacman(true);
+			ex.setVisible(true);
+		});
 	}
 }

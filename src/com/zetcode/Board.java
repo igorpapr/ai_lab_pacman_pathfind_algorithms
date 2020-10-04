@@ -78,10 +78,17 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
 
     public Board() {
+        this(false);
+    }
 
+    public Board(boolean inGame) {
+        this.inGame = inGame;
         loadImages();
         initVariables();
         initBoard();
+        if (inGame) {
+            initGame();
+        }
     }
 
     private void initBoard() {
