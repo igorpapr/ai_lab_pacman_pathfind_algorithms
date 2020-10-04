@@ -435,6 +435,27 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    public boolean canMoveUp(int pos) {
+        // actually it isn't safe, because we don't check index out of bound,
+        // but the map is hardcoded, so...
+        return (screenData[pos - N_BLOCKS] & 8) == 0;
+    }
+
+    public boolean canMoveDown(int pos) {
+        // same
+        return (screenData[pos + N_BLOCKS] & 2) == 0;
+    }
+
+    public boolean canMoveLeft(int pos) {
+        // ...
+        return (screenData[pos - 1] & 4) == 0;
+    }
+
+    public boolean canMoveRight(int pos) {
+        // just like in any other canMove* method
+        return (screenData[pos + 1] & 1) == 0;
+    }
+
     private void drawMaze(Graphics2D g2d) {
 
         short i = 0;
