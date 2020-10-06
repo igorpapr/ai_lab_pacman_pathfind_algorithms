@@ -1,13 +1,14 @@
 package com.kma.solver;
 
+import com.zetcode.Board;
+
 import java.util.List;
 
 public class UCSMazeSolver extends MazeSolver {
 
-    public UCSMazeSolver(int[] map, int pacmanPosition, int candyPosition) {
+    public UCSMazeSolver(Board map, int pacmanPosition) {
         this.map = map;
         this.pacmanPosition = pacmanPosition;
-        this.candyPosition = candyPosition;
     }
 
     @Override
