@@ -15,5 +15,10 @@ public class Main {
 			var ex = new Pacman(board);
 			ex.setVisible(true);
 		});
+		var dfs = new DFSMazeSolver(board, 172);
+		var path = dfs.solve();
+		for (var p : path) {
+			System.out.print(p + " ");
+		}
 	}
 }

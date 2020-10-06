@@ -32,6 +32,57 @@ public class DFSMazeSolver extends MazeSolver {
 
     @Override
     public List<Integer> solve() {
-        return null;
+        return solve(pacmanPosition);
+    }
+
+    private List<Integer> solve(int initPos) {
+        var solved = false;
+        var pos = initPos;
+        while (!solved) {
+            stack.push(pos);
+            visited.add(pos);
+            var next = chooseNext(pacmanPosition);
+            while (next.isPresent()) {
+                map.path.add(pos);
+                System.out.println("go " + pos);
+
+                pos = next.get();
+                stack.push(pos);
+                visited.add(pos);
+
+                if (map.candyIsUnderneath(pos)) {
+                    System.out.println("solved!");
+                    solved = true;
+                    map.path.add(pos);
+                    break;
+                }
+                next = chooseNext(pos);
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!solved) {
+                var prev = stack.pop();
+                map.path.pollLast();
+                var nextPrev = chooseNext(prev);
+                while (nextPrev.isEmpty()) {
+                    System.out.println("go back " + prev);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    prev = stack.pop();
+                    nextPrev = chooseNext(prev);
+                    map.path.pollLast();
+                }
+                pos = prev;
+            }
+        }
+        return new LinkedList<>(stack);
     }
 }
