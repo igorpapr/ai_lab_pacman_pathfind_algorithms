@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Board extends JPanel implements ActionListener {
@@ -21,6 +24,11 @@ public class Board extends JPanel implements ActionListener {
     private boolean dying = false;
 
     private final int BLOCK_SIZE = 24;
+
+    public int getN_BLOCKS() {
+        return N_BLOCKS;
+    }
+
     private final int N_BLOCKS = 15;
     private final int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final int PAC_ANIM_DELAY = 2;
@@ -79,6 +87,9 @@ public class Board extends JPanel implements ActionListener {
     private short[] screenData;
     private Timer timer;
 
+    private int candyPos;
+    public final LinkedBlockingDeque<Integer> path = new LinkedBlockingDeque<>();
+
     public Board() {
         this(false);
     }
@@ -101,6 +112,11 @@ public class Board extends JPanel implements ActionListener {
             pos = ThreadLocalRandom.current().nextInt(N_BLOCKS * N_BLOCKS);
         }
         screenData[pos] = (short) (screenData[pos] | 16);
+        candyPos = pos;
+    }
+
+    public int getCandyPos() {
+        return candyPos;
     }
 
     private void initBoard() {
@@ -447,20 +463,37 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    public boolean canMoveUp(int pos) {
-        return (pos / N_BLOCKS >= 1) && (screenData[pos - N_BLOCKS] & 32) == 0;
+    public Optional<Integer> canMoveUp(int pos) {
+//        return (pos / N_BLOCKS >= 1) && (screenData[pos - N_BLOCKS] & 32) == 0;
+        if ((pos / N_BLOCKS >= 1) && (screenData[pos - N_BLOCKS] & 32) == 0) {
+            return Optional.of(pos - N_BLOCKS);
+        }
+        return Optional.empty();
     }
 
-    public boolean canMoveDown(int pos) {
-        return (pos / N_BLOCKS <= N_BLOCKS - 2) && (screenData[pos + N_BLOCKS] & 32) == 0;
+    public Optional<Integer> canMoveDown(int pos) {
+        if ((pos / N_BLOCKS <= N_BLOCKS - 2) && (screenData[pos + N_BLOCKS] & 32) == 0) {
+            return Optional.of(pos + N_BLOCKS);
+        }
+        return Optional.empty();
     }
 
-    public boolean canMoveLeft(int pos) {
-        return (pos % N_BLOCKS >= 1) && (screenData[pos - 1] & 32) == 0;
+    public Optional<Integer> canMoveLeft(int pos) {
+        if ((pos % N_BLOCKS >= 1) && (screenData[pos - 1] & 32) == 0) {
+            return Optional.of(pos - 1);
+        }
+        return Optional.empty();
     }
 
-    public boolean canMoveRight(int pos) {
-        return (pos % N_BLOCKS <= N_BLOCKS - 2) && (screenData[pos + 1] & 32) == 0;
+    public Optional<Integer> canMoveRight(int pos) {
+        if ((pos % N_BLOCKS <= N_BLOCKS - 2) && (screenData[pos + 1] & 32) == 0) {
+            return Optional.of(pos+1);
+        }
+        return Optional.empty();
+    }
+
+    public boolean candyIsUnderneath(int pos) {
+        return (screenData[pos] & 16) != 0;
     }
 
     private void drawMaze(Graphics2D g2d) {
@@ -604,9 +637,25 @@ public class Board extends JPanel implements ActionListener {
             showIntroScreen(g2d);
         }
 
+        drawPath(g2d);
+
         g2d.drawImage(ii, 5, 5, this);
         Toolkit.getDefaultToolkit().sync();
         g2d.dispose();
+    }
+
+    private void drawPath(Graphics2D g2d) {
+            g2d.setColor(Color.RED);
+            if (path.size() < 2) return;
+            var p1 = path.peek();
+            for (var p2 : path) {
+                var x1 = p1 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+                var y1 = p1 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+                var x2 = p2 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+                var y2 = p2 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+                g2d.drawLine(x1, y1, x2, y2);
+                p1 = p2;
+            }
     }
 
     class TAdapter extends KeyAdapter {
