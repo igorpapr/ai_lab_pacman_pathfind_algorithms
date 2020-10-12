@@ -1,5 +1,6 @@
 package com.kma;
 
+import com.kma.solver.BFSMazeSolver;
 import com.kma.solver.DFSMazeSolver;
 import com.zetcode.Board;
 import com.zetcode.Pacman;
@@ -15,7 +16,7 @@ public class Main {
 			var ex = new Pacman(board);
 			ex.setVisible(true);
 		});
-		var dfs = new DFSMazeSolver(board, 172);
+		var dfs = new BFSMazeSolver(board, 172);
 		var path = dfs.solve();
 		for (var p : path) {
 			System.out.print(p + " ");
