@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Board extends JPanel implements ActionListener {
@@ -88,7 +88,7 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
 
     private int candyPos;
-    public final LinkedBlockingDeque<Integer> path = new LinkedBlockingDeque<>();
+    public final HashMap<Integer, LinkedList<Integer>> path = new HashMap<>();
 
     public Board() {
         this(false);
@@ -108,7 +108,7 @@ public class Board extends JPanel implements ActionListener {
     private void placeRandomCandy() {
         int pos = ThreadLocalRandom.current().nextInt(N_BLOCKS * N_BLOCKS);
 
-        while((screenData[pos] & 32) != 0) {
+        while ((screenData[pos] & 32) != 0) {
             pos = ThreadLocalRandom.current().nextInt(N_BLOCKS * N_BLOCKS);
         }
         screenData[pos] = (short) (screenData[pos] | 16);
@@ -487,7 +487,7 @@ public class Board extends JPanel implements ActionListener {
 
     public Optional<Integer> canMoveRight(int pos) {
         if ((pos % N_BLOCKS <= N_BLOCKS - 2) && (screenData[pos + 1] & 32) == 0) {
-            return Optional.of(pos+1);
+            return Optional.of(pos + 1);
         }
         return Optional.empty();
     }
@@ -645,17 +645,30 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void drawPath(Graphics2D g2d) {
-            g2d.setColor(Color.RED);
-            if (path.size() < 2) return;
-            var p1 = path.peek();
-            for (var p2 : path) {
-                var x1 = p1 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
-                var y1 = p1 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
-                var x2 = p2 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
-                var y2 = p2 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
-                g2d.drawLine(x1, y1, x2, y2);
-                p1 = p2;
-            }
+        g2d.setColor(Color.RED);
+        drawPath(g2d, 172);
+    }
+
+    private void drawPath(Graphics2D g2d, int p1) {
+        var points = path.getOrDefault(p1, new LinkedList<>());
+        for (int p2 : points) {
+            var x1 = p1 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+            var y1 = p1 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+            var x2 = p2 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+            var y2 = p2 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+            g2d.drawLine(x1, y1, x2, y2);
+            drawPath(g2d, p2);
+        }
+    }
+
+    public void addPathAfter(int prev, int next) {
+        var list = path.getOrDefault(prev, new LinkedList<>());
+        list.add(next);
+        path.put(prev, list);
+    }
+
+    public void removePathAfter(int pos) {
+        path.remove(pos);
     }
 
     class TAdapter extends KeyAdapter {

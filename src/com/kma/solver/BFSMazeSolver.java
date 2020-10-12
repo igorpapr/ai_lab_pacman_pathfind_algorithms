@@ -56,6 +56,12 @@ public class BFSMazeSolver extends MazeSolver {
                 if (visited.contains(pos))
                     continue;
                 visited.add(pos);
+                map.addPathAfter(pathMap.get(pos), pos);
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 fillQueue(pos);
                 //FOUND CANDY
                 if (map.candyIsUnderneath(pos)) {

@@ -23,10 +23,25 @@ public class DFSMazeSolver extends MazeSolver {
         var down = map.canMoveDown(pos);
         var left = map.canMoveLeft(pos);
 
-        if (up.isPresent() && !visited.contains(up.get())) return up;
-        if (right.isPresent() && !visited.contains(right.get())) return right;
-        if (down.isPresent() && !visited.contains(down.get())) return down;
-        if (left.isPresent() && !visited.contains(left.get())) return left;
+        if (up.isPresent() && !visited.contains(up.get())) {
+            map.addPathAfter(pos, up.get());
+            return up;
+        }
+
+        if (right.isPresent() && !visited.contains(right.get())) {
+            map.addPathAfter(pos, right.get());
+            return right;
+        }
+
+        if (down.isPresent() && !visited.contains(down.get())) {
+            map.addPathAfter(pos, down.get());
+            return down;
+        }
+
+        if (left.isPresent() && !visited.contains(left.get())) {
+            map.addPathAfter(pos, left.get());
+            return left;
+        }
         return Optional.empty();
     }
 
@@ -43,8 +58,6 @@ public class DFSMazeSolver extends MazeSolver {
             visited.add(pos);
             var next = chooseNext(pos);
             while (next.isPresent()) {
-                map.path.add(pos);
-
                 pos = next.get();
                 stack.push(pos);
                 visited.add(pos);
@@ -52,7 +65,7 @@ public class DFSMazeSolver extends MazeSolver {
                 if (map.candyIsUnderneath(pos)) {
                     System.out.println("solved!");
                     solved = true;
-                    map.path.add(pos);
+//                    map.addPathAfter(prev, pos);
                     break;
                 }
                 next = chooseNext(pos);
@@ -66,7 +79,6 @@ public class DFSMazeSolver extends MazeSolver {
 
             if (!solved) {
                 var prev = stack.pop();
-                map.path.pollLast();
                 var nextPrev = chooseNext(prev);
                 while (nextPrev.isEmpty()) {
                     try {
@@ -76,7 +88,7 @@ public class DFSMazeSolver extends MazeSolver {
                     }
                     prev = stack.pop();
                     nextPrev = chooseNext(prev);
-                    map.path.pollLast();
+                    map.removePathAfter(prev);
                 }
                 pos = prev;
             }
