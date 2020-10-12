@@ -9,6 +9,7 @@ public class BFSMazeSolver extends MazeSolver {
     private final Set<Integer> visited;
     private final Queue<Integer> queue;
     private final HashMap<Integer, Integer> pathMap;
+    private int count;
 
     public BFSMazeSolver(Board map, int pacmanPosition) {
         this.map = map;
@@ -53,6 +54,7 @@ public class BFSMazeSolver extends MazeSolver {
             fillQueue(pos);
             while (!queue.isEmpty()) {
                 pos = queue.remove();
+                count++;
                 if (visited.contains(pos))
                     continue;
                 visited.add(pos);
@@ -87,5 +89,9 @@ public class BFSMazeSolver extends MazeSolver {
         }
         Collections.reverse(res);
         return res;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

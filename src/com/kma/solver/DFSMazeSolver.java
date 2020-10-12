@@ -9,6 +9,8 @@ public class DFSMazeSolver extends MazeSolver {
     private final Set<Integer> visited;
     private final Stack<Integer> stack;
 
+    private int count;
+
     public DFSMazeSolver(Board map, int pacmanPosition) {
         this.map = map;
         this.pacmanPosition = pacmanPosition;
@@ -58,6 +60,7 @@ public class DFSMazeSolver extends MazeSolver {
             visited.add(pos);
             var next = chooseNext(pos);
             while (next.isPresent()) {
+                count++;
                 pos = next.get();
                 stack.push(pos);
                 visited.add(pos);
@@ -81,6 +84,7 @@ public class DFSMazeSolver extends MazeSolver {
                 var prev = stack.pop();
                 var nextPrev = chooseNext(prev);
                 while (nextPrev.isEmpty()) {
+                    count++;
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
@@ -94,5 +98,9 @@ public class DFSMazeSolver extends MazeSolver {
             }
         }
         return new LinkedList<>(stack);
+    }
+
+    public int getCount() {
+        return count;
     }
 }
