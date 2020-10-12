@@ -16,8 +16,8 @@ public class Main {
 			var ex = new Pacman(board);
 			ex.setVisible(true);
 		});
-		var dfs = new BFSMazeSolver(board, 172);
-		var path = dfs.solve();
+		var solver = new BFSMazeSolver(board, 172);
+		var path = solver.solve();
 		for (var p : path) {
 			System.out.print(p + " ");
 		}
