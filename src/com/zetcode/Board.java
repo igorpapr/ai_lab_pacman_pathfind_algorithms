@@ -509,13 +509,13 @@ public class Board extends JPanel implements ActionListener {
         drawScore(g2d);
         doAnim();
 
+        drawPath(g2d);
         if (inGame) {
             playGame(g2d);
         } else {
             showIntroScreen(g2d);
         }
 
-        drawPath(g2d);
 
         g2d.drawImage(ii, 5, 5, this);
         Toolkit.getDefaultToolkit().sync();
