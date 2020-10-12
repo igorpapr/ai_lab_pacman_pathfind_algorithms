@@ -1,5 +1,7 @@
 package com.kma;
 
+import com.zetcode.Board;
+
 import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.List;
@@ -9,26 +11,28 @@ import java.util.Queue;
 public class Gamer extends Thread {
     private final List<Integer> path;
     private final Queue<Integer> pathControlledKeys;
+    private final Board board;
 
-    public Gamer(List<Integer> path) {
+    public Gamer(List<Integer> path, Board board) {
         this.path = path;
+        this.board = board;
         this.pathControlledKeys = new ArrayDeque<>();
         fillPathControlledKeys();
     }
 
     @Override
     public void run() {
-        try {
-            Robot robot = new Robot();
-            Thread.sleep(500);
+        for (int key : pathControlledKeys) {
+            try {
+                Robot robot = new Robot();
+                int pos = path.remove(0);
 
-            for (int key : pathControlledKeys) {
                 robot.keyPress(key);
                 robot.keyRelease(key);
-                Thread.sleep(123);
+                while (board.getPacmanPos() != pos) {}
+            } catch (AWTException e) {
+                e.printStackTrace();
             }
-        } catch (AWTException | InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

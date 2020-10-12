@@ -232,6 +232,7 @@ public class Board extends JPanel implements ActionListener {
                 screenData[pos] = (short) (ch & 15);
                 score++;
                 inGame = false;
+                path.clear();
             }
 
             if (req_dx != 0 || req_dy != 0) {
@@ -546,6 +547,10 @@ public class Board extends JPanel implements ActionListener {
 
     public void removePathAfter(int pos) {
         path.remove(pos);
+    }
+
+    public int getPacmanPos() {
+        return pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE);
     }
 
     class TAdapter extends KeyAdapter {

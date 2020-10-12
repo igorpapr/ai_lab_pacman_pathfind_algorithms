@@ -18,7 +18,7 @@ public class Main {
 		});
 		var solver = new BFSMazeSolver(board, 172);
 		List<Integer> path = solver.solve();
-		Gamer gamer = new Gamer(path);
+		Gamer gamer = new Gamer(path, board);
 		gamer.start();
 		for (var p : path) {
 			System.out.print(p + " ");
