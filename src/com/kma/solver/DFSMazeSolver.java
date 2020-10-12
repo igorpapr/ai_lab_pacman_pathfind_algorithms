@@ -41,7 +41,7 @@ public class DFSMazeSolver extends MazeSolver {
         while (!solved) {
             stack.push(pos);
             visited.add(pos);
-            var next = chooseNext(pacmanPosition);
+            var next = chooseNext(pos);
             while (next.isPresent()) {
                 map.path.add(pos);
                 System.out.println("go " + pos);
