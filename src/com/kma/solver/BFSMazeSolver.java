@@ -53,6 +53,8 @@ public class BFSMazeSolver extends MazeSolver {
             fillQueue(pos);
             while (!queue.isEmpty()) {
                 pos = queue.remove();
+                if (visited.contains(pos))
+                    continue;
                 visited.add(pos);
                 fillQueue(pos);
                 //FOUND CANDY
