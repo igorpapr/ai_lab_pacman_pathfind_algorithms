@@ -44,7 +44,6 @@ public class DFSMazeSolver extends MazeSolver {
             var next = chooseNext(pos);
             while (next.isPresent()) {
                 map.path.add(pos);
-                System.out.println("go " + pos);
 
                 pos = next.get();
                 stack.push(pos);
@@ -70,7 +69,6 @@ public class DFSMazeSolver extends MazeSolver {
                 map.path.pollLast();
                 var nextPrev = chooseNext(prev);
                 while (nextPrev.isEmpty()) {
-                    System.out.println("go back " + prev);
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
