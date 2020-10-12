@@ -76,6 +76,7 @@ public class BFSMazeSolver extends MazeSolver {
 
     private List<Integer> recreatePath(Map<Integer, Integer> pathArr, int lastPosition){
         List<Integer> res = new LinkedList<>();
+        res.add(lastPosition);
         int current = lastPosition;
         int temp;
         while(current != -1){

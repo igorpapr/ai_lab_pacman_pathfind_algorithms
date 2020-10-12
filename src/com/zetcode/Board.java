@@ -33,16 +33,12 @@ public class Board extends JPanel implements ActionListener {
     private final int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final int PAC_ANIM_DELAY = 2;
     private final int PACMAN_ANIM_COUNT = 4;
-    //    private final int MAX_GHOSTS = 0;
     private final int PACMAN_SPEED = 6;
 
     private int pacAnimCount = PAC_ANIM_DELAY;
     private int pacAnimDir = 1;
     private int pacmanAnimPos = 0;
-    //    private int N_GHOSTS = 6;
     private int pacsLeft, score;
-//    private int[] dx, dy;
-//    private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
 
     private Image ghost;
     private Image pacman1, pacman2up, pacman2left, pacman2right, pacman2down;
@@ -133,13 +129,6 @@ public class Board extends JPanel implements ActionListener {
         screenData = new short[N_BLOCKS * N_BLOCKS];
         mazeColor = new Color(5, 100, 5);
         d = new Dimension(400, 400);
-//        ghost_x = new int[MAX_GHOSTS];
-//        ghost_dx = new int[MAX_GHOSTS];
-//        ghost_y = new int[MAX_GHOSTS];
-//        ghost_dy = new int[MAX_GHOSTS];
-//        ghostSpeed = new int[MAX_GHOSTS];
-//        dx = new int[4];
-//        dy = new int[4];
 
         timer = new Timer(40, this);
         timer.start();
@@ -176,7 +165,6 @@ public class Board extends JPanel implements ActionListener {
 
             movePacman();
             drawPacman(g2d);
-            //moveGhosts(g2d);
 
             //checkMaze(); // maybe will use later
         }
@@ -213,36 +201,6 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void checkMaze() {
-
-        short i = 0;
-        boolean finished = true;
-
-        while (i < N_BLOCKS * N_BLOCKS && finished) {
-
-            if ((screenData[i] & 48) != 0) {
-                finished = false;
-            }
-
-            i++;
-        }
-
-        if (finished) {
-
-            score += 50;
-
-//            if (N_GHOSTS < MAX_GHOSTS) {
-//                N_GHOSTS++;
-//            }
-
-            if (currentSpeed < maxSpeed) {
-                currentSpeed++;
-            }
-
-            initLevel();
-        }
-    }
-
     private void death() {
 
         pacsLeft--;
@@ -253,84 +211,6 @@ public class Board extends JPanel implements ActionListener {
 
         continueLevel();
     }
-
-//    private void moveGhosts(Graphics2D g2d) {
-//
-//        short i;
-//        int pos;
-//        int count;
-//
-//        for (i = 0; i < N_GHOSTS; i++) {
-//            if (ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0) {
-//                pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
-//
-//                count = 0;
-//
-//                if ((screenData[pos] & 1) == 0 && ghost_dx[i] != 1) {
-//                    dx[count] = -1;
-//                    dy[count] = 0;
-//                    count++;
-//                }
-//
-//                if ((screenData[pos] & 2) == 0 && ghost_dy[i] != 1) {
-//                    dx[count] = 0;
-//                    dy[count] = -1;
-//                    count++;
-//                }
-//
-//                if ((screenData[pos] & 4) == 0 && ghost_dx[i] != -1) {
-//                    dx[count] = 1;
-//                    dy[count] = 0;
-//                    count++;
-//                }
-//
-//                if ((screenData[pos] & 8) == 0 && ghost_dy[i] != -1) {
-//                    dx[count] = 0;
-//                    dy[count] = 1;
-//                    count++;
-//                }
-//
-//                if (count == 0) {
-//
-//                    if ((screenData[pos] & 15) == 15) {
-//                        ghost_dx[i] = 0;
-//                        ghost_dy[i] = 0;
-//                    } else {
-//                        ghost_dx[i] = -ghost_dx[i];
-//                        ghost_dy[i] = -ghost_dy[i];
-//                    }
-//
-//                } else {
-//
-//                    count = (int) (Math.random() * count);
-//
-//                    if (count > 3) {
-//                        count = 3;
-//                    }
-//
-//                    ghost_dx[i] = dx[count];
-//                    ghost_dy[i] = dy[count];
-//                }
-//
-//            }
-//
-//            ghost_x[i] = ghost_x[i] + (ghost_dx[i] * ghostSpeed[i]);
-//            ghost_y[i] = ghost_y[i] + (ghost_dy[i] * ghostSpeed[i]);
-//            drawGhost(g2d, ghost_x[i] + 1, ghost_y[i] + 1);
-//
-//            if (pacman_x > (ghost_x[i] - 12) && pacman_x < (ghost_x[i] + 12)
-//                    && pacman_y > (ghost_y[i] - 12) && pacman_y < (ghost_y[i] + 12)
-//                    && inGame) {
-//
-//                dying = true;
-//            }
-//        }
-//    }
-
-//    private void drawGhost(Graphics2D g2d, int x, int y) {
-//
-//        g2d.drawImage(ghost, x, y, this);
-//    }
 
     private void movePacman() {
 
@@ -351,6 +231,7 @@ public class Board extends JPanel implements ActionListener {
             if ((ch & 16) != 0) {
                 screenData[pos] = (short) (ch & 15);
                 score++;
+                inGame = false;
             }
 
             if (req_dx != 0 || req_dy != 0) {
@@ -546,7 +427,6 @@ public class Board extends JPanel implements ActionListener {
         pacsLeft = 3;
         score = 0;
         initLevel();
-//        N_GHOSTS = 6;
         currentSpeed = 3;
     }
 
@@ -595,8 +475,6 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void loadImages() {
-
-//        ghost = new ImageIcon("src/resources/images/ghost.png").getImage();
         pacman1 = new ImageIcon("src/resources/images/pacman.png").getImage();
         pacman2up = new ImageIcon("src/resources/images/up1.png").getImage();
         pacman3up = new ImageIcon("src/resources/images/up2.png").getImage();
@@ -610,7 +488,6 @@ public class Board extends JPanel implements ActionListener {
         pacman2right = new ImageIcon("src/resources/images/right1.png").getImage();
         pacman3right = new ImageIcon("src/resources/images/right2.png").getImage();
         pacman4right = new ImageIcon("src/resources/images/right3.png").getImage();
-
     }
 
     @Override
@@ -723,7 +600,6 @@ public class Board extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         repaint();
     }
 }

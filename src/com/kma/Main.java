@@ -1,11 +1,11 @@
 package com.kma;
 
 import com.kma.solver.BFSMazeSolver;
-import com.kma.solver.DFSMazeSolver;
 import com.zetcode.Board;
 import com.zetcode.Pacman;
 
 import java.awt.*;
+import java.util.List;
 
 public class Main {
 
@@ -17,7 +17,9 @@ public class Main {
 			ex.setVisible(true);
 		});
 		var solver = new BFSMazeSolver(board, 172);
-		var path = solver.solve();
+		List<Integer> path = solver.solve();
+		Gamer gamer = new Gamer(path);
+		gamer.start();
 		for (var p : path) {
 			System.out.print(p + " ");
 		}
