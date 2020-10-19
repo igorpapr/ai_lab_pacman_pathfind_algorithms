@@ -40,7 +40,6 @@ public class Board extends JPanel implements ActionListener {
     private int pacmanAnimPos = 0;
     private int pacsLeft, score;
 
-    private Image ghost;
     private Image pacman1, pacman2up, pacman2left, pacman2right, pacman2down;
     private Image pacman3up, pacman3down, pacman3left, pacman3right;
     private Image pacman4up, pacman4down, pacman4left, pacman4right;
@@ -156,17 +155,11 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void playGame(Graphics2D g2d) {
-
         if (dying) {
-
             death();
-
         } else {
-
             movePacman();
             drawPacman(g2d);
-
-            //checkMaze(); // maybe will use later
         }
     }
 
@@ -443,27 +436,6 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void continueLevel() {
-
-//        short i;
-//        int dx = 1;
-//        int random;
-
-//        for (i = 0; i < N_GHOSTS; i++) {
-//
-//            ghost_y[i] = 4 * BLOCK_SIZE;
-//            ghost_x[i] = 4 * BLOCK_SIZE;
-//            ghost_dy[i] = 0;
-//            ghost_dx[i] = dx;
-//            dx = -dx;
-//            random = (int) (Math.random() * (currentSpeed + 1));
-//
-//            if (random > currentSpeed) {
-//                random = currentSpeed;
-//            }
-//
-//            ghostSpeed[i] = validSpeeds[random];
-//        }
-
         pacman_x = 7 * BLOCK_SIZE;
         pacman_y = 11 * BLOCK_SIZE;
         pacmand_x = 0;

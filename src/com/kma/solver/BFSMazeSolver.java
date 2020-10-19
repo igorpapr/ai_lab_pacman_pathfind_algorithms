@@ -8,8 +8,9 @@ public class BFSMazeSolver extends MazeSolver {
 
     private final Set<Integer> visited;
     private final Queue<Integer> queue;
+
+    //used in order to remember the previous step of each step
     private final HashMap<Integer, Integer> pathMap;
-    private int count;
 
     public BFSMazeSolver(Board map, int pacmanPosition) {
         this.map = map;
@@ -20,6 +21,7 @@ public class BFSMazeSolver extends MazeSolver {
         this.pathMap = new HashMap<>();
     }
 
+    //function of finding the next step
     private void fillQueue(int pos) {
         List<Optional<Integer>> waysList = new ArrayList<>();
         waysList.add(map.canMoveUp(pos));
@@ -39,17 +41,15 @@ public class BFSMazeSolver extends MazeSolver {
         }
     }
 
+    //BFS algorithm
     @Override
-    public List<Integer> solve() {
-        return solve(pacmanPosition);
-    }
-
-    private List<Integer> solve(int initPos) {
+    protected List<Integer> solve(int initPos) {
         boolean solved = false;
         int pos = initPos;
         while (!solved) {
             queue.add(pos);
             visited.add(pos);
+            //initial step
             pathMap.put(pos, -1);
             fillQueue(pos);
             while (!queue.isEmpty()) {
@@ -59,30 +59,29 @@ public class BFSMazeSolver extends MazeSolver {
                     continue;
                 visited.add(pos);
                 map.addPathAfter(pathMap.get(pos), pos);
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                fillQueue(pos);
-                //FOUND CANDY
+                sleep();
+
+                //found candy
                 if (map.candyIsUnderneath(pos)) {
                     System.out.println("solved!");
                     solved = true;
                     break;
                 }
+
+                fillQueue(pos);
             }
         }
         return recreatePath(pathMap, pos);
     }
 
-    private List<Integer> recreatePath(Map<Integer, Integer> pathArr, int lastPosition){
+    //recreating path by pathMap
+    private List<Integer> recreatePath(Map<Integer, Integer> pathMap, int lastPosition){
         List<Integer> res = new LinkedList<>();
         res.add(lastPosition);
         int current = lastPosition;
         int temp;
         while(current != -1){
-            temp = pathArr.get(current);
+            temp = pathMap.get(current);
             if(temp != -1)
                 res.add(temp);
             current = temp;
@@ -93,5 +92,10 @@ public class BFSMazeSolver extends MazeSolver {
 
     public int getCount() {
         return count;
+    }
+
+    @Override
+    public String toString() {
+        return "BFSMazeSolver";
     }
 }

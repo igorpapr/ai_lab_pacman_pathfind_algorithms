@@ -9,8 +9,6 @@ public class DFSMazeSolver extends MazeSolver {
     private final Set<Integer> visited;
     private final Stack<Integer> stack;
 
-    private int count;
-
     public DFSMazeSolver(Board map, int pacmanPosition) {
         this.map = map;
         this.pacmanPosition = pacmanPosition;
@@ -19,6 +17,7 @@ public class DFSMazeSolver extends MazeSolver {
         this.stack = new Stack<>();
     }
 
+    //function of finding the next step
     private Optional<Integer> chooseNext(int pos) {
         var up = map.canMoveUp(pos);
         var right = map.canMoveRight(pos);
@@ -47,12 +46,9 @@ public class DFSMazeSolver extends MazeSolver {
         return Optional.empty();
     }
 
+    //DFS algorithm
     @Override
-    public List<Integer> solve() {
-        return solve(pacmanPosition);
-    }
-
-    private List<Integer> solve(int initPos) {
+    protected List<Integer> solve(int initPos) {
         var solved = false;
         var pos = initPos;
         while (!solved) {
@@ -72,12 +68,7 @@ public class DFSMazeSolver extends MazeSolver {
                     break;
                 }
                 next = chooseNext(pos);
-
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                sleep();
             }
 
             if (!solved) {
@@ -85,11 +76,7 @@ public class DFSMazeSolver extends MazeSolver {
                 var nextPrev = chooseNext(prev);
                 while (nextPrev.isEmpty()) {
                     count++;
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    sleep();
                     prev = stack.pop();
                     nextPrev = chooseNext(prev);
                     map.removePathAfter(prev);
@@ -100,7 +87,8 @@ public class DFSMazeSolver extends MazeSolver {
         return new LinkedList<>(stack);
     }
 
-    public int getCount() {
-        return count;
+    @Override
+    public String toString() {
+        return "DFSMazeSolver";
     }
 }
