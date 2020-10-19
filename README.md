@@ -11,6 +11,7 @@ The core code of the game was taken from https://github.com/janbodnar/Java-Pacma
 
 For teacher: 
   This lab (DFS + BFS) was made by:
-    - Ihor Paprotskyi - creating additional classes and relations structure, implementing BFS, time measurement, pacman walking by the automatic "keys" Thread;
-    - Oleksii Lozovoi - changing map and Board, generating random candy, implementing DFS, steps measurement, pacman walking by the automatic "keys" Thread.
+  - Ihor Paprotskyi: creating additional classes and relations structure, implementing BFS, time measurement, pacman walking by the automatic "keys" Thread;
+  
+  - Oleksii Lozovoi: changing map and Board, generating random candy, implementing DFS, steps measurement, pacman walking by the automatic "keys" Thread.
     
