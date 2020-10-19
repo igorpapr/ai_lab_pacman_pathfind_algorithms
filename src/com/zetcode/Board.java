@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Board extends JPanel implements ActionListener {
@@ -83,6 +84,7 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
 
     private int candyPos;
+    private Random randomGenerator = new Random();
     public final HashMap<Integer, LinkedList<Integer>> path = new HashMap<>();
 
     public Board() {
@@ -90,21 +92,26 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public Board(boolean inGame) {
+        this(inGame, Long.MIN_VALUE);
+    }
+
+    public Board(boolean inGame, long seed){
         this.inGame = inGame;
+        if (seed != Long.MIN_VALUE)
+            this.randomGenerator.setSeed(seed);
         loadImages();
         initVariables();
         initBoard();
-
         if (inGame) {
             initGame();
         }
     }
 
     private void placeRandomCandy() {
-        int pos = ThreadLocalRandom.current().nextInt(N_BLOCKS * N_BLOCKS);
+        int pos = randomGenerator.nextInt(N_BLOCKS * N_BLOCKS);
 
         while ((screenData[pos] & 32) != 0) {
-            pos = ThreadLocalRandom.current().nextInt(N_BLOCKS * N_BLOCKS);
+            pos = randomGenerator.nextInt(N_BLOCKS * N_BLOCKS);
         }
         screenData[pos] = (short) (screenData[pos] | 16);
         candyPos = pos;
@@ -170,7 +177,7 @@ public class Board extends JPanel implements ActionListener {
         g2d.setColor(Color.white);
         g2d.drawRect(50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
 
-        String s = "Press s to start.";
+        String s = "Press s to start or restart the program.";
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = this.getFontMetrics(small);
 

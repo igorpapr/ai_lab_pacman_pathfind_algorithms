@@ -11,13 +11,16 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args) {
-		var board = new Board(true);
+		var board = new Board(true, 1255);
 		EventQueue.invokeLater(() -> {
 
 			var ex = new Pacman(board);
 			ex.setVisible(true);
 		});
-		var solver = new BFSMazeSolver(board, 172);
+
+		//var solver = new BFSMazeSolver(board, 172);
+		//TRY ONE OF THESE
+		var solver = new DFSMazeSolver(board, 172);
 
 		List<Integer> path = solver.solve();
 

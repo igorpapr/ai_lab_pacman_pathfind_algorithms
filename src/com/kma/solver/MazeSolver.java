@@ -34,7 +34,7 @@ public abstract class MazeSolver {
 
     }
 
-    //Use this method for on each algorithm animation iteration in order for human to see how it works
+    //Use this method on each algorithm animation iteration in order for human to see how it works
     protected void sleep(){
         try {
             Thread.sleep(ANIMATION_PAUSE_MILLIS);
