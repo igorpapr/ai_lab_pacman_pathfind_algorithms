@@ -488,6 +488,7 @@ public class Board extends JPanel implements ActionListener {
         doAnim();
 
         drawPath(g2d);
+        g2d.setColor(Color.white);
         if (inGame) {
             playGame(g2d);
         } else {
@@ -508,10 +509,10 @@ public class Board extends JPanel implements ActionListener {
     private void drawPath(Graphics2D g2d, int p1) {
         var points = path.getOrDefault(p1, new LinkedList<>());
         for (int p2 : points) {
-            var x1 = p1 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
-            var y1 = p1 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
-            var x2 = p2 % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
-            var y2 = p2 / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+            var x1 = getXByPosition(p1);
+            var y1 = getYByPosition(p1);
+            var x2 = getXByPosition(p2);
+            var y2 = getYByPosition(p2);
             g2d.drawLine(x1, y1, x2, y2);
             drawPath(g2d, p2);
         }
@@ -529,6 +530,27 @@ public class Board extends JPanel implements ActionListener {
 
     public int getPacmanPos() {
         return pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE);
+    }
+
+    //returns a straight distance from the given block to candy
+    public double getDistanceFromBlockToCandy(int screenPosition){
+        var x_given = getXByPosition(screenPosition);
+        var y_given = getYByPosition(screenPosition);
+        var x_candy = getXByPosition(candyPos);
+        var y_candy = getYByPosition(candyPos);
+
+        //default straight (buggy af, don't know why)
+        return Math.sqrt((x_given-x_candy)*(x_given-x_candy) + (y_given-y_candy)*(y_given-y_candy));
+        //manhattan
+        //return Math.abs(x_candy - x_given) + Math.abs(y_candy - y_given);
+    }
+
+    private int getYByPosition(int screenPosition) {
+        return screenPosition / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
+    }
+
+    private int getXByPosition(int screenPosition) {
+        return screenPosition % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
     }
 
     class TAdapter extends KeyAdapter {

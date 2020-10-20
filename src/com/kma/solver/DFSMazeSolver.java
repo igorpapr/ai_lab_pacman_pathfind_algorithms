@@ -6,7 +6,7 @@ import java.util.*;
 
 public class DFSMazeSolver extends MazeSolver {
 
-    private final Set<Integer> visited;
+    protected final Set<Integer> visited;
     private final Stack<Integer> stack;
 
     public DFSMazeSolver(Board map, int pacmanPosition) {
@@ -18,7 +18,7 @@ public class DFSMazeSolver extends MazeSolver {
     }
 
     //function of finding the next step
-    private Optional<Integer> chooseNext(int pos) {
+    protected Optional<Integer> chooseNext(int pos) {
         var up = map.canMoveUp(pos);
         var right = map.canMoveRight(pos);
         var down = map.canMoveDown(pos);
