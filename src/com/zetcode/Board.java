@@ -545,11 +545,11 @@ public class Board extends JPanel implements ActionListener {
         //return Math.abs(x_candy - x_given) + Math.abs(y_candy - y_given);
     }
 
-    private int getYByPosition(int screenPosition) {
+    public int getYByPosition(int screenPosition) {
         return screenPosition / N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
     }
 
-    private int getXByPosition(int screenPosition) {
+    public int getXByPosition(int screenPosition) {
         return screenPosition % N_BLOCKS * BLOCK_SIZE + BLOCK_SIZE / 2;
     }
 

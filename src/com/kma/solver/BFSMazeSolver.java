@@ -6,11 +6,11 @@ import java.util.*;
 
 public class BFSMazeSolver extends MazeSolver {
 
-    private final Set<Integer> visited;
-    private final Queue<Integer> queue;
+    protected final Set<Integer> visited;
+    protected Queue<Integer> queue;
 
     //used in order to remember the previous step of each step
-    private final HashMap<Integer, Integer> pathMap;
+    protected final HashMap<Integer, Integer> pathMap;
 
     public BFSMazeSolver(Board map, int pacmanPosition) {
         this.map = map;
@@ -22,7 +22,7 @@ public class BFSMazeSolver extends MazeSolver {
     }
 
     //function of finding the next step
-    private void fillQueue(int pos) {
+    protected void fillQueue(int pos) {
         List<Optional<Integer>> waysList = new ArrayList<>();
         waysList.add(map.canMoveUp(pos));
         waysList.add(map.canMoveRight(pos));
@@ -32,7 +32,7 @@ public class BFSMazeSolver extends MazeSolver {
         checkPresenceAndRememberPath(waysList, pos);
     }
 
-    private void checkPresenceAndRememberPath(List<Optional<Integer>> posAroundList, int currentPos){
+    protected void checkPresenceAndRememberPath(List<Optional<Integer>> posAroundList, int currentPos){
         for(Optional<Integer> posToAdd : posAroundList){
             if (posToAdd.isPresent() && !visited.contains(posToAdd.get())) {
                 queue.add(posToAdd.get());
@@ -75,7 +75,7 @@ public class BFSMazeSolver extends MazeSolver {
     }
 
     //recreating path by pathMap
-    private List<Integer> recreatePath(Map<Integer, Integer> pathMap, int lastPosition){
+    protected List<Integer> recreatePath(Map<Integer, Integer> pathMap, int lastPosition){
         List<Integer> res = new LinkedList<>();
         res.add(lastPosition);
         int current = lastPosition;
