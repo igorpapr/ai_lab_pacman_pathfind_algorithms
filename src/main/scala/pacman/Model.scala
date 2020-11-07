@@ -4,25 +4,32 @@ import breeze.linalg.DenseMatrix
 import pacman.Model.{Ghost, MovingEntity, Pacman}
 
 case class Model(desk: DenseMatrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
+
+    def setDesk(newDesk: DenseMatrix[Cell]): Model = this.copy(desk = newDesk)
+
+    def setPacman(newPacman: Pacman): Model = this.copy(pacman = newPacman)
+
+    def setDesk(newGhosts: List[Ghost]): Model = this.copy(ghosts = newGhosts)
+
     // Tries to move entity in given direction
     // If movement was successful returns direction, else nothing
-    private def move_entity(entity: MovingEntity, direction: Direction): Option[Direction] = {
-        var (new_x, new_y) = MovingEntity.unapply(entity)
+    private def moveEntity(entity: MovingEntity, direction: Direction): Option[Direction] = {
+        var (newX, newY) = MovingEntity.unapply(entity)
         direction match {
-            case Direction.Up => new_y -= 1
-            case Direction.Down => new_y += 1
-            case Direction.Left => new_x -= 1
-            case Direction.Right => new_x += 1
+            case Direction.Up => newY -= 1
+            case Direction.Down => newY += 1
+            case Direction.Left => newX -= 1
+            case Direction.Right => newX += 1
         }
-        val x_range = 0 until desk.cols
-        val y_range = 0 until desk.rows
-        if (!x_range.contains(new_x) || !y_range.contains(new_y) || desk(new_x, new_y) == Cell.Block) return None
-        entity.x = new_x
-        entity.y = new_y
+        val xRange = 0 until desk.cols
+        val yRange = 0 until desk.rows
+        if (!xRange.contains(newX) || !yRange.contains(newY) || desk(newX, newY) == Cell.Block) return None
+        entity.x = newX
+        entity.y = newY
         Some(direction)
     }
 
-    def move_pacman(direction: Direction): Option[Direction] = move_entity(pacman, direction)
+    def movePacman(direction: Direction): Option[Direction] = moveEntity(pacman, direction)
 
 }
 
