@@ -1,7 +1,7 @@
 package pacman
 
 import breeze.linalg.DenseMatrix
-import pacman.Model.{Ghost, MovingEntity, Pacman}
+import pacman.MovingEntity._
 
 case class Model(desk: DenseMatrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
 
@@ -35,20 +35,6 @@ case class Model(desk: DenseMatrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
 
 object Model {
 
-    sealed trait MovingEntity {
-        var x: Int
-        var y: Int
-    }
-
-    object MovingEntity {
-        def unapply(arg: MovingEntity): (Int, Int) = (arg.x, arg.y)
-    }
-
-    case class Pacman(var x: Int, var y: Int) extends MovingEntity
-
-    case class Ghost(var x: Int, var y: Int) extends MovingEntity
-
-
     def default: Model = {
         val desk: DenseMatrix[Cell] = new DenseMatrix(15, 15, {
             import Cell._
@@ -75,5 +61,5 @@ object Model {
         Model(desk, pacman, ghosts)
     }
 
-    def random(seed: Int = 0): Model = ???
+    //    def random(seed: Int = 0): Model = ???
 }
