@@ -35,7 +35,7 @@ case class Model(desk: DenseMatrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
 
 object Model {
 
-    def default: Model = {
+    val default: Model = {
         val desk: DenseMatrix[Cell] = new DenseMatrix(15, 15, {
             import Cell._
             Array(
@@ -51,11 +51,11 @@ object Model {
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Empty, Candy, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
                 Block, Block, Block, Block, Block, Block, Block, Block, Block, Block, Empty, Empty, Empty, Empty, Empty
             ): Array[Cell]
-        }).t
+        })
         val ghosts: List[Ghost] = Nil
         val pacman: Pacman = Pacman(11, 7)
         Model(desk, pacman, ghosts)
