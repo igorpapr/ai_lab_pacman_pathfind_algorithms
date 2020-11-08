@@ -57,7 +57,7 @@ object Model {
             ): Array[Cell]
         })
         val ghosts: List[Ghost] = Nil
-        val pacman: Pacman = Pacman(11, 7)
+        val pacman: Pacman = Pacman(7, 11)
         Model(desk, pacman, ghosts)
     }
 
