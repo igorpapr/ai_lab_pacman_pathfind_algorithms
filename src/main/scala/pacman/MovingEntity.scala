@@ -3,20 +3,21 @@ package pacman
 import pacman.MovingEntity.{Ghost, Pacman}
 
 sealed trait MovingEntity {
-    var x: Int
-    var y: Int
+    val x: Int
+    val y: Int
 
-    def copy(a: Int = x, b: Int = y): MovingEntity = this match {
-        case MovingEntity.Pacman(x, y) => Pacman(a, b)
-        case MovingEntity.Ghost(x, y) => Ghost(a, b)
-    }
+    def move(newX: Int, newY: Int): MovingEntity
 }
 
 object MovingEntity {
 
-    case class Pacman(var x: Int, var y: Int) extends MovingEntity
+    case class Pacman(x: Int, y: Int) extends MovingEntity {
+        def move(newX: Int, newY: Int): Pacman = copy(newX, newY)
+    }
 
-    case class Ghost(var x: Int, var y: Int) extends MovingEntity
+    case class Ghost(x: Int, y: Int) extends MovingEntity {
+        def move(newX: Int, newY: Int): Ghost = copy(newX, newY)
+    }
 
     def unapply(arg: MovingEntity): (Int, Int) = (arg.x, arg.y)
 }

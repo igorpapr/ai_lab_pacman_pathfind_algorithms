@@ -1,6 +1,5 @@
 package pacman
 
-import breeze.linalg.DenseMatrix
 import scalafx.application.JFXApp
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{Circle, Rectangle}
@@ -17,7 +16,7 @@ case class View(model: Model) extends JFXApp.PrimaryStage {
         content = modelToNodeSeq(model)
     }
 
-    def redraw(): Unit = {
+    def redraw(model: Model): Unit = {
         scene = new Scene {
             fill = Color.Black
             content = modelToNodeSeq(model)
@@ -59,7 +58,7 @@ object View {
         })
     }
 
-    def deskToNodeSeq(desk: DenseMatrix[Cell]): Seq[Node] = (for {
+    def deskToNodeSeq(desk: Matrix[Cell]): Seq[Node] = (for {
         i <- 0 until desk.cols
         j <- 0 until desk.rows
     } yield CellView(desk(i, j), i, j).nodes).flatten

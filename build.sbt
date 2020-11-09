@@ -21,4 +21,4 @@ libraryDependencies ++= javaFXModules.map( m =>
     "org.openjfx" % s"javafx-$m" % "14.0.1" classifier osName
 )
 
-libraryDependencies += "org.scalanlp" %% "breeze" % "1.1"
+//libraryDependencies += "org.scalanlp" %% "breeze" % "1.1"
