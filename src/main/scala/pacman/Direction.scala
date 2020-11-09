@@ -12,4 +12,6 @@ object Direction {
 
     case object Right extends Direction
 
+    val Directions: List[Direction] = List(Up, Down, Left, Right)
+
 }
