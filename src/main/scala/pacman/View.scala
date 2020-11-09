@@ -31,35 +31,38 @@ object View {
 
     val CellSize = 24
 
-    case class CellView(cell: Cell, i: Int, j: Int) extends Rectangle {
-        width = CellSize
-        height = CellSize
-
-        x = i * CellSize
-        y = j * CellSize
-
-        cell match {
-            case Cell.Empty => fill = Color.Black
-            case Cell.Candy =>
-                fill = Color.HotPink
-                arcWidth = 10
-                arcHeight = 10
-
-                width = CellSize / 2
-                height = CellSize / 2
-                x = i * CellSize + CellSize / 4
-                y = j * CellSize + CellSize / 4
-            case Cell.Block =>
+    case class CellView(cell: Cell, i: Int, j: Int) {
+        val Empty: Node = new Rectangle {
+            x = i * CellSize
+            y = j * CellSize
+            height = CellSize
+            width = CellSize
+            fill = Color.Transparent
+        }
+        val nodes: Seq[Node] = Empty +: (cell match {
+            case Cell.Empty => Nil
+            case Cell.Block => Seq(new Rectangle {
+                x = i * CellSize
+                y = j * CellSize
+                width = CellSize
+                height = CellSize
                 fill = Color.Red
                 arcWidth = 10
                 arcHeight = 10
-        }
+            })
+            case Cell.Candy => Seq(new Circle {
+                fill = Color.HotPink
+                centerX = i * CellSize + CellSize / 2
+                centerY = j * CellSize + CellSize / 2
+                radius = CellSize / 5
+            })
+        })
     }
 
-    def deskToNodeSeq(desk: DenseMatrix[Cell]): Seq[CellView] = for {
+    def deskToNodeSeq(desk: DenseMatrix[Cell]): Seq[Node] = (for {
         i <- 0 until desk.cols
         j <- 0 until desk.rows
-    } yield CellView(desk(i, j), i, j)
+    } yield CellView(desk(i, j), i, j).nodes).flatten
 
     def pacmanToNode(pacman: Pacman): Node = new Circle {
         centerX = pacman.x * CellSize + CellSize / 2
