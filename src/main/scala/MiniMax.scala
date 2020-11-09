@@ -7,20 +7,6 @@ object MiniMax {
     var iteration = 0
     var models: mutable.HashSet[Model] = mutable.HashSet()
 
-    def minimax(model: Model, depth: Int): (Int, List[Model]) =
-        minimax(model, depth, 0, Nil)
-
-    private def minimax(model: Model, depth: Int, index: Int, log: List[Model]): (Int, List[Model]) = {
-        iteration += 1
-        models.add(model)
-        println(s"iteration: $iteration; log len: ${log.length}; unique models: ${models.size}")
-        if (depth == 0 || model.state != ModelState.GoingOn) return (modelHeuristic(model) - log.length, log :+ model)
-        index match {
-            case 0 => possibleMovesMax(model, index, depth, log)
-            case _ => possibleMovesMin(model, index, depth, log)
-        }
-    }
-
     def alphabeta(model: Model, depth: Int): (Int, List[Model]) =
         alphabeta(model, depth, 0, Int.MinValue, Int.MaxValue, Nil)
 
@@ -66,16 +52,6 @@ object MiniMax {
 
     private def possibleMoves(model: Model, index: Int): LazyList[Model] =
         Directions.flatMap(d => model.moveEntity(index, d))
-
-    private def possibleMovesMax(model: Model, index: Int, depth: Int, log: List[Model]): (Int, List[Model]) =
-        possibleMoves(model, index)
-          .map(model =>
-              minimax(model, depth - 1, (index + 1) % (model.ghosts.length + 1), log :+ model)).maxBy(_._1)
-
-    private def possibleMovesMin(model: Model, index: Int, depth: Int, log: List[Model]): (Int, List[Model]) =
-        possibleMoves(model, index)
-          .map(model =>
-              minimax(model, depth - 1, (index + 1) % (model.ghosts.length + 1), log)).minBy(_._1)
 
     private def modelHeuristic(model: Model): Int = model.state match {
         case ModelState.GoingOn => -model.candiesCount
