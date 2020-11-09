@@ -12,7 +12,7 @@ case class Model(desk: Matrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
         else ModelState.GoingOn
     }
 
-    private def moveEntity[A <: MovingEntity](movingEntity: A, direction: Direction): Option[(A, Direction)] = {
+    private def moveEntity[A <: MovingEntity](movingEntity: A, direction: Direction): Option[A] = {
         var (newX, newY) = MovingEntity.unapply(movingEntity)
         direction match {
             case Direction.Up => newY -= 1
@@ -24,48 +24,45 @@ case class Model(desk: Matrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
         val yRange = 0 until desk.rows
         if (!xRange.contains(newX) || !yRange.contains(newY) || desk(newX, newY) == Cell.Block) return None
         val newEntity: A = movingEntity.move(newX, newY).asInstanceOf[A]
-        Some(newEntity, direction)
+        Some(newEntity)
     }
 
-    def moveEntity(index: Int, direction: Direction): Option[(Model, Direction)] = for {
-        (model1, direction) <- index match {
+    def moveEntity(index: Int, direction: Direction): Option[Model] = for {
+        model <- index match {
             case 0 =>
-                moveEntity(pacman, direction).map { case (p, d) => this.copy(pacman = p) -> d }
+                moveEntity(pacman, direction).map(p => this.copy(pacman = p))
             case _ =>
                 val n = index - 1
-                moveEntity(ghosts(n), direction).map { case (g, d) => this.copy(ghosts = ghosts.updated(n, g)) -> d }
+                moveEntity(ghosts(n), direction).map(g => this.copy(ghosts = ghosts.updated(n, g)))
         }
-    } yield {
-        val desk1 = desk.updated(pacman.x, pacman.y, Empty)
-        val model2 = model1.copy(desk = desk.updated(pacman.x, pacman.y, Empty))
-        println(desk1.data.count(_ == Candy))
-        (model2, direction)
-    }
+    } yield model.eatCandy
+
+    def eatCandy: Model = this.copy(desk = desk.updated(pacman.x, pacman.y, Empty))
 }
 
 object Model {
     val default: Model = {
-            val desk: Matrix[Cell] = Matrix(15, 15, {
-                Vector(
-                    Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                    Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                    Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                    Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                    Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                    Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                    Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                    Block, Empty, Empty, Empty, Block, Block, Block, Block, Block, Block, Block, Empty, Empty, Block, Empty,
-                    Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                    Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                    Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                    Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                    Block, Empty, Empty, Empty, Empty, Empty, Empty, Candy, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                    Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                    Block, Block, Block, Block, Block, Block, Block, Block, Block, Block, Empty, Empty, Empty, Empty, Empty
-                )
-            })
-            val ghosts: List[Ghost] = Nil
-            val pacman: Pacman = Pacman(7, 11)
-            Model(desk, pacman, ghosts)
-        }
+        val desk: Matrix[Cell] = Matrix(15, 15, {
+            Vector(
+                Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Block, Block, Block, Block, Block, Block, Block, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Candy, Candy, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Block, Block, Block, Block, Block, Block, Block, Block, Block, Block, Empty, Empty, Empty, Empty, Empty
+            )
+        })
+        val pacman: Pacman = Pacman(7, 11)
+        val ghosts: List[Ghost] = Ghost(8, 12) :: Nil
+        Model(desk, pacman, ghosts)
+    }
 }

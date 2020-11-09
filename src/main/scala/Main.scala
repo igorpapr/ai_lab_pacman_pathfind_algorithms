@@ -1,4 +1,6 @@
-import pacman.{Direction, Model, View}
+import java.util.concurrent.TimeUnit
+
+import pacman.{Model, View}
 import scalafx.application.{JFXApp, Platform}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -9,13 +11,20 @@ object Main extends JFXApp {
     val view: View = View(model)
     stage = view
     Future {
-        Thread.sleep(500)
-        val model1 = model.moveEntity(0, Direction.Down).get._1
-        Platform.runLater(view.redraw(model1))
-        println(model1.state)
-        println(model1.desk(model1.pacman.x, model1.pacman.y))
-        //                println(MiniMax.minimax(model, 3))
-//        println(MiniMax.minimax(model, 5))
+        def time[R](block: => R): R = {
+            val t0 = System.nanoTime()
+            val result = block    // call-by-name
+            val t1 = System.nanoTime()
+            println("Elapsed time: " + TimeUnit.NANOSECONDS.toSeconds(t1 - t0) + "s")
+            result
+        }
+
+        val (_, log) = time { MiniMax.alphabeta(model, 10) }
+        log.foreach { m =>
+            Thread.sleep(500)
+            Platform.runLater(view.redraw(m))
+        }
+        println(log.last.state)
     }
 
 }

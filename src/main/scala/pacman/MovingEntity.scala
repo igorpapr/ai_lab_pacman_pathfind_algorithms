@@ -1,7 +1,5 @@
 package pacman
 
-import pacman.MovingEntity.{Ghost, Pacman}
-
 sealed trait MovingEntity {
     val x: Int
     val y: Int

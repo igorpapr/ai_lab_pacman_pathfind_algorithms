@@ -12,6 +12,6 @@ object Direction {
 
     case object Right extends Direction
 
-    val Directions: List[Direction] = List(Up, Down, Left, Right)
+    val Directions: LazyList[Direction] = LazyList(Up, Down, Left, Right)
 
 }

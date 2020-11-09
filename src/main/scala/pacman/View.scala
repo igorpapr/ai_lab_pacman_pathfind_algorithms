@@ -1,5 +1,6 @@
 package pacman
 
+import pacman.MovingEntity.Ghost
 import scalafx.application.JFXApp
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{Circle, Rectangle}
@@ -70,5 +71,15 @@ object View {
         fill = Color.Yellow
     }
 
-    def modelToNodeSeq(model: Model): Seq[Node] = deskToNodeSeq(model.desk) :+ pacmanToNode(model.pacman)
+    def ghostToNode(ghost: Ghost): Node = new Circle {
+        centerX = ghost.x * CellSize + CellSize / 2
+        centerY = ghost.y * CellSize + CellSize / 2
+        radius = CellSize / 2 - 2
+        fill = Color.WhiteSmoke
+    }
+
+    def ghostsToNodeSeq(ghosts: List[Ghost]): Seq[Node] = ghosts.map(ghostToNode)
+
+    def modelToNodeSeq(model: Model): Seq[Node] =
+        (deskToNodeSeq(model.desk) :+ pacmanToNode(model.pacman)) ++ ghostsToNodeSeq(model.ghosts)
 }
