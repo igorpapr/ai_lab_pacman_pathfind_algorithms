@@ -4,22 +4,26 @@ import pacman._
 import scala.collection.mutable
 
 object MiniMax {
+    val MinValue: Float = -10000
+    val MaxValue: Float = 10000
     var iteration = 0
     var models: mutable.HashSet[Model] = mutable.HashSet()
 
-    def alphabeta(model: Model, depth: Int): (Int, List[Model]) =
-        alphabeta(model, depth, 0, Int.MinValue, Int.MaxValue, Nil)
+    def alphabeta(model: Model, depth: Int): (Float, List[Model]) =
+        alphabeta(model, depth, 0, MinValue, MaxValue, Nil)
 
-    def alphabeta(model: Model, depth: Int, index: Int, alpha: Int, beta: Int, log: List[Model]): (Int, List[Model]) = {
+    def alphabeta(model: Model, depth: Int, index: Int, alpha: Float, beta: Float, log: List[Model]): (Float, List[Model]) = {
         iteration += 1
         models.add(model)
-        //println(s"iteration: $iteration; log len: ${log.length}; unique models: ${models.size}")
+//        println(s"iteration: $iteration; log len: ${log.length}; unique models: ${models.size};" +
+//          s"model heuristic: ${modelHeuristic(model)}")
 
-        if (depth == 0 || model.state != ModelState.GoingOn) return (modelHeuristic(model) - log.length, log :+ model)
+        if (depth == 0 || model.state != ModelState.GoingOn)
+            return (modelHeuristic(model) - log.length.toFloat, log :+ model)
         index match {
             case 0 =>
                 var a = alpha
-                var value: (Int, List[Model]) = Int.MinValue -> Nil
+                var value: (Float, List[Model]) = MinValue -> Nil
 
                 for (child <- possibleMoves(model, index)) {
                     value = Seq(value, alphabeta(
@@ -34,7 +38,7 @@ object MiniMax {
                 value
             case _ =>
                 var b = beta
-                var value: (Int, List[Model]) = Int.MaxValue -> Nil
+                var value: (Float, List[Model]) = MaxValue -> Nil
 
                 for (child <- possibleMoves(model, index)) {
                     value = Seq(value, alphabeta(
@@ -53,9 +57,14 @@ object MiniMax {
     private def possibleMoves(model: Model, index: Int): LazyList[Model] =
         Directions.flatMap(d => model.moveEntity(index, d))
 
-    private def modelHeuristic(model: Model): Int = model.state match {
-        case ModelState.GoingOn => -model.candiesCount
-        case ModelState.Win => Int.MaxValue
-        case ModelState.Lose => Int.MinValue
+    private def modelHeuristic(model: Model): Float = model.state match {
+        case ModelState.GoingOn => -model.candiesCount * 10 + distanceToGhosts(model)
+        case ModelState.Win => MaxValue + distanceToGhosts(model)
+        case ModelState.Lose => MinValue
+    }
+
+    private def distanceToGhosts(model: Model): Int = model.ghosts.foldLeft(0) { case (acc, g) =>
+        val p = model.pacman
+        acc + (p.x - g.x).abs + (p.y - g.y).abs
     }
 }
