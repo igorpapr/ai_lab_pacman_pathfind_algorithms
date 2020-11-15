@@ -1,7 +1,7 @@
 package pacman
 
 import pacman.MovingEntity.Ghost
-import scalafx.application.JFXApp
+import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{Circle, Rectangle}
 import scalafx.scene.{Node, Scene}
@@ -21,6 +21,13 @@ case class View(model: Model) extends JFXApp.PrimaryStage {
         scene = new Scene {
             fill = Color.Black
             content = modelToNodeSeq(model)
+        }
+    }
+
+    def redraw(log: List[Model]): Unit = {
+        log.foreach { m =>
+            Thread.sleep(200)
+            Platform.runLater(redraw(m))
         }
     }
 }

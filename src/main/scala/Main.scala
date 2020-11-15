@@ -15,16 +15,14 @@ object Main extends JFXApp {
             val t0 = System.nanoTime()
             val result = block    // call-by-name
             val t1 = System.nanoTime()
-            println("Elapsed time: " + TimeUnit.NANOSECONDS.toSeconds(t1 - t0) + "s")
+            println("Elapsed time: " + TimeUnit.NANOSECONDS.toMillis(t1 - t0) + "ms")
             result
         }
 
-        val (_, log) = time { MiniMax.alphabeta(model, 10) }
-        log.foreach { m =>
-            Thread.sleep(500)
-            Platform.runLater(view.redraw(m))
-        }
-        println(log.last.state)
+        val (value, log) = time { MiniMax.alphabeta(model, 10) }
+        println(value, log)
+//        println(value, log.last.state)
+        view.redraw(log)
     }
 
 }
