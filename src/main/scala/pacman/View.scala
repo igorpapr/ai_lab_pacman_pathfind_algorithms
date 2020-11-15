@@ -1,6 +1,6 @@
 package pacman
 
-import pacman.MovingEntity.Ghost
+import pacman.MovingEntity.{Ghost, Pacman}
 import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{Circle, Rectangle}
@@ -33,8 +33,6 @@ case class View(model: Model) extends JFXApp.PrimaryStage {
 }
 
 object View {
-
-    import pacman.MovingEntity.Pacman
 
     val CellSize = 24
 

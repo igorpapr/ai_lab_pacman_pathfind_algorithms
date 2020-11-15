@@ -60,7 +60,7 @@ object MiniMax {
     private def modelHeuristic(model: Model): Float = model.state match {
         case ModelState.GoingOn => -model.candiesCount * 10 + distanceToGhosts(model)
         case ModelState.Win => MaxValue + distanceToGhosts(model)
-        case ModelState.Lose => MinValue
+        case ModelState.Lose => MinValue - distanceToGhosts(model)
     }
 
     private def distanceToGhosts(model: Model): Int = model.ghosts.foldLeft(0) { case (acc, g) =>
