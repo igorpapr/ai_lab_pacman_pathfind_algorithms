@@ -17,7 +17,7 @@ object Main extends JFXApp {
         val (log, iterations) = time {run(initModel)}
         println(s"Total alphabeta calls: $iterations")
         log.foreach { m =>
-            Thread.sleep(75)
+            Thread.sleep(100)
             Platform.runLater(view.redraw(m))
         }
     }.recover(e => {

@@ -54,7 +54,7 @@ object MiniMax {
                         depth - 1,
                         (index + 1) % (model.ghosts.length + 1),
                         alpha, b,
-                        log :+ child)).minBy(_._1)
+                        log)).minBy(_._1)
                     b = math.min(b, value._1)
                     if (b <= alpha) return value
                 }
