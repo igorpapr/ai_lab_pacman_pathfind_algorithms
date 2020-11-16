@@ -23,13 +23,6 @@ case class View(model: Model) extends JFXApp.PrimaryStage {
             content = modelToNodeSeq(model)
         }
     }
-
-    def redraw(log: List[Model]): Unit = {
-        log.foreach { m =>
-            Thread.sleep(200)
-            Platform.runLater(redraw(m))
-        }
-    }
 }
 
 object View {

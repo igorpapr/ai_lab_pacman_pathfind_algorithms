@@ -7,8 +7,8 @@ case class Model(desk: Matrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
     lazy val candiesCount: Int = desk.data.count(_ == Candy)
     lazy val state: ModelState = {
         val pxy = (pacman.x, pacman.y)
-        if (candiesCount == 0) ModelState.Win
-        else if (ghosts.exists(g => (g.x, g.y) == pxy)) ModelState.Lose
+        if (ghosts.exists(g => (g.x, g.y) == pxy)) ModelState.Lose
+        else if (candiesCount == 0) ModelState.Win
         else ModelState.GoingOn
     }
 
@@ -35,7 +35,7 @@ case class Model(desk: Matrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
                 val n = index - 1
                 moveEntity(ghosts(n), direction).map(g => this.copy(ghosts = ghosts.updated(n, g)))
         }
-    } yield model.eatCandy
+    } yield model
 
     def eatCandy: Model = this.copy(desk = desk.updated(pacman.x, pacman.y, Empty))
 }
@@ -46,7 +46,7 @@ object Model {
             Vector(
                 Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
                 Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Candy, Empty, Empty,
                 Empty, Block, Block, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
                 Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
                 Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
@@ -56,13 +56,24 @@ object Model {
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty, Empty, Empty, Empty, Empty, Block, Empty,
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
-                Block, Empty, Empty, Empty, Candy, Candy, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
+                Block, Empty, Empty, Candy, Candy, Candy, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Block, Empty,
                 Block, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
                 Block, Block, Block, Block, Block, Block, Block, Block, Block, Block, Empty, Empty, Empty, Empty, Empty
             )
         })
         val pacman: Pacman = Pacman(7, 11)
-        val ghosts: List[Ghost] = Ghost(8, 12) :: Ghost(8,13) :: Nil
+        val ghosts: List[Ghost] =
+//            Ghost(8, 12) ::
+//              Ghost(3, 7) ::
+              Nil
         Model(desk, pacman, ghosts)
+    }
+
+    def fullCandies(model: Model): Model = {
+        val desk = model.desk.copy(data = model.desk.data.map {
+            case Empty => Candy
+            case cell => cell
+        })
+        model.copy(desk = desk)
     }
 }

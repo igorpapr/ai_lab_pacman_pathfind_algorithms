@@ -2,28 +2,33 @@ import pacman.Direction.Directions
 import pacman._
 
 import scala.collection.mutable
+import scala.util.Random
 
 object MiniMax {
-    val MinValue: Float = -10000
-    val MaxValue: Float = 10000
+    val MinValue: Double = -10000
+    val MaxValue: Double = 10000
     var iteration = 0
     var models: mutable.HashSet[Model] = mutable.HashSet()
+    val random = new Random(0)
 
-    def alphabeta(model: Model, depth: Int): (Float, List[Model]) =
+    def alphabeta(model: Model, depth: Int): (Double, List[Model]) =
         alphabeta(model, depth, 0, MinValue, MaxValue, Nil)
 
-    def alphabeta(model: Model, depth: Int, index: Int, alpha: Float, beta: Float, log: List[Model]): (Float, List[Model]) = {
-        iteration += 1
-        models.add(model)
-//        println(s"iteration: $iteration; log len: ${log.length}; unique models: ${models.size};" +
-//          s"model heuristic: ${modelHeuristic(model)}")
+    def alphabeta(model: Model, depth: Int, index: Int): (Double, List[Model]) =
+        alphabeta(model, depth, index, MinValue, MaxValue, Nil)
 
+    def alphabeta(m: Model, depth: Int, index: Int, alpha: Double, beta: Double, log: List[Model]): (Double, List[Model]) = {
+//        iteration += 1
+//        models.add(model)
+        //        println(s"iteration: $iteration; log len: ${log.length}; unique models: ${models.size};" +
+        //          s"model heuristic: ${modelHeuristic(model)}")
+        val model = m.eatCandy
         if (depth == 0 || model.state != ModelState.GoingOn)
-            return (modelHeuristic(model) - log.length.toFloat, log :+ model)
+            return (modelHeuristic(m, log), log :+ model)
         index match {
             case 0 =>
                 var a = alpha
-                var value: (Float, List[Model]) = MinValue -> Nil
+                var value: (Double, List[Model]) = MinValue -> Nil
 
                 for (child <- possibleMoves(model, index)) {
                     value = Seq(value, alphabeta(
@@ -38,7 +43,7 @@ object MiniMax {
                 value
             case _ =>
                 var b = beta
-                var value: (Float, List[Model]) = MaxValue -> Nil
+                var value: (Double, List[Model]) = MaxValue -> Nil
 
                 for (child <- possibleMoves(model, index)) {
                     value = Seq(value, alphabeta(
@@ -54,17 +59,38 @@ object MiniMax {
         }
     }
 
-    private def possibleMoves(model: Model, index: Int): LazyList[Model] =
-        Directions.flatMap(d => model.moveEntity(index, d))
-
-    private def modelHeuristic(model: Model): Float = model.state match {
-        case ModelState.GoingOn => -model.candiesCount * 10 + distanceToGhosts(model)
-        case ModelState.Win => MaxValue + distanceToGhosts(model)
-        case ModelState.Lose => MinValue - distanceToGhosts(model)
+    private def possibleMoves(model: Model, index: Int): LazyList[Model] = {
+        val res = Directions.flatMap(d => model.moveEntity(index, d))
+//        if (index > 0 && random.nextBoolean()) random.shuffle(res).take(1)
+//        else
+            res
     }
 
-    private def distanceToGhosts(model: Model): Int = model.ghosts.foldLeft(0) { case (acc, g) =>
-        val p = model.pacman
-        acc + (p.x - g.x).abs + (p.y - g.y).abs
+    private def modelHeuristic(model: Model, log: List[Model]): Double = model.state match {
+        case ModelState.GoingOn =>
+            val dc = -minDistanceToCandy(model)
+            val dg = distanceToGhosts(model)
+            val len = -log.length
+            dc + dg + len
+        case ModelState.Win => MaxValue + distanceToGhosts(model) - log.length
+        case ModelState.Lose => MinValue + distanceToGhosts(model) - log.length
+    }
+
+    private def distanceToGhosts(model: Model): Double =
+        model.ghosts.foldLeft(0) { case (acc, g) =>
+            val p = model.pacman
+            acc + (p.x - g.x).abs + (p.y - g.y).abs
+        }
+
+    private def minDistanceToCandy(model: Model): Double = {
+        if (model.candiesCount == 0) return 1
+        val (x, y) = MovingEntity.unapply(model.pacman)
+        val candies = for {
+            i <- 0 until model.desk.cols
+            j <- 0 until model.desk.rows
+            cell = model.desk(i, j)
+            if cell == Cell.Candy
+        } yield (i, j)
+        candies.map { case (i, j) => (x - i).abs + (y - j).abs }.min
     }
 }
