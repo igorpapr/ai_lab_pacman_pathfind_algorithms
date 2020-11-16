@@ -9,7 +9,7 @@ object MiniMax {
     val MaxValue: Double = 10000
     var iteration = 0
     var models: mutable.HashSet[Model] = mutable.HashSet()
-    val random = new Random(0)
+    val random = new Random()
 
     def alphabeta(model: Model, depth: Int): (Double, List[Model]) =
         alphabeta(model, depth, 0, MinValue, MaxValue, Nil)
@@ -25,9 +25,9 @@ object MiniMax {
 
         val model = m.eatCandy
         if (depth == 0 || m.candyUnderPacman)
-            return (modelHeuristic(m, log), log :+ model)
+            return (modelCost(m, log), log :+ model)
         if (model.state != ModelState.GoingOn)
-            return (modelHeuristic(model, log), log :+ model)
+            return (modelCost(model, log), log :+ model)
         index match {
             case 0 =>
                 var a = alpha
@@ -69,23 +69,30 @@ object MiniMax {
             res
     }
 
-    private def modelHeuristic(model: Model, log: List[Model]): Double = model.state match {
-        case ModelState.GoingOn =>
-            val dc = -minDistanceToCandy(model)
-            val dg = distanceToGhosts(model)
-            val len = -log.length
-            dc*2 + dg + len
-        case ModelState.Win => MaxValue + distanceToGhosts(model) - log.length
-        case ModelState.Lose => MinValue + distanceToGhosts(model) - log.length
+    private def modelCost(model: Model, log: List[Model]): Double = model.state match {
+        case ModelState.GoingOn => goingOnModelCost(model) - log.length
+        case ModelState.Win => MaxValue - distanceToGhostsMinSum(model)._2 - log.length
+        case ModelState.Lose => MinValue - distanceToGhostsMinSum(model)._2 - log.length
     }
 
-    private def distanceToGhosts(model: Model): Double =
-        model.ghosts.foldLeft(0) { case (acc, g) =>
-            val p = model.pacman
-            acc + (p.x - g.x).abs + (p.y - g.y).abs
-        }
+    private def goingOnModelCost(model: Model): Double = {
+        val dc = distanceToCandyMin(model)
+        val (dgm, dgs) = distanceToGhostsMinSum(model)
+        if (dc < dgm)
+            dgs - dc*2 - model.candiesCount
+        else
+            dgm*3 - dc
+    }
 
-    private def minDistanceToCandy(model: Model): Double = {
+    private def distanceToGhostsMinSum(model: Model): (Double, Double) = {
+        import math.{pow, sqrt}
+        val p = model.pacman
+        val gds = model.ghosts.map { g => sqrt(pow(p.x - g.x, 2) + pow(p.y - g.y, 2)) }
+        (gds.min, gds.sum)
+    }
+
+    private def distanceToCandyMin(model: Model): Double = {
+        import math.{pow, sqrt}
         if (model.candiesCount == 0) return 1
         val (x, y) = MovingEntity.unapply(model.pacman)
         val candies = for {
@@ -94,6 +101,6 @@ object MiniMax {
             cell = model.desk(i, j)
             if cell == Cell.Candy
         } yield (i, j)
-        candies.map { case (i, j) => (x - i).abs + (y - j).abs }.min
+        candies.map { case (i, j) => sqrt(pow(x - i, 2) + pow(y - j, 2)) }.min
     }
 }
