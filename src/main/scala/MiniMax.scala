@@ -65,8 +65,7 @@ object MiniMax {
     private def possibleMoves(model: Model, index: Int): LazyList[Model] = {
         val res = Directions.flatMap(d => model.moveEntity(index, d))
         if (index > 0 && random.nextBoolean()) random.shuffle(res).take(1)
-        else
-            res
+        else res
     }
 
     private def modelCost(model: Model, log: List[Model]): Double = model.state match {
@@ -79,15 +78,16 @@ object MiniMax {
         val dc = distanceToCandyMin(model)
         val (dgm, dgs) = distanceToGhostsMinSum(model)
         if (dc < dgm)
-            dgs - dc*2 - model.candiesCount
+            dgs - dc * 2 - model.candiesCount
         else
-            dgm*3 - dc
+            dgm * 3 - dc
     }
 
     private def distanceToGhostsMinSum(model: Model): (Double, Double) = {
         import math.{pow, sqrt}
+        if (model.ghosts.isEmpty) return (0,0)
         val p = model.pacman
-        val gds = model.ghosts.map { g => sqrt(pow(p.x - g.x, 2) + pow(p.y - g.y, 2)) }
+        val gds = model.ghosts.map { g => (p.x - g.x).abs + (p.y - g.y).abs }
         (gds.min, gds.sum)
     }
 
@@ -101,6 +101,6 @@ object MiniMax {
             cell = model.desk(i, j)
             if cell == Cell.Candy
         } yield (i, j)
-        candies.map { case (i, j) => sqrt(pow(x - i, 2) + pow(y - j, 2)) }.min
+        candies.map { case (i, j) => (x - i).abs + (y - j).abs }.min
     }
 }

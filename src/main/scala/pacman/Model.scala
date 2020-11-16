@@ -68,7 +68,7 @@ object Model {
         })
         val pacman: Pacman = Pacman(7, 11)
         val ghosts: List[Ghost] =
-            Ghost(8, 12) ::
+//            Ghost(8, 12) ::
               Ghost(3, 7) ::
               Nil
         Model(desk, pacman, ghosts)
