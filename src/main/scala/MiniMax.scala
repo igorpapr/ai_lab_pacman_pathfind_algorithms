@@ -18,13 +18,16 @@ object MiniMax {
         alphabeta(model, depth, index, MinValue, MaxValue, Nil)
 
     def alphabeta(m: Model, depth: Int, index: Int, alpha: Double, beta: Double, log: List[Model]): (Double, List[Model]) = {
-//        iteration += 1
-//        models.add(model)
+        //        iteration += 1
+        //        models.add(model)
         //        println(s"iteration: $iteration; log len: ${log.length}; unique models: ${models.size};" +
         //          s"model heuristic: ${modelHeuristic(model)}")
+
         val model = m.eatCandy
-        if (depth == 0 || model.state != ModelState.GoingOn)
+        if (depth == 0 || m.candyUnderPacman)
             return (modelHeuristic(m, log), log :+ model)
+        if (model.state != ModelState.GoingOn)
+            return (modelHeuristic(model, log), log :+ model)
         index match {
             case 0 =>
                 var a = alpha
@@ -61,8 +64,8 @@ object MiniMax {
 
     private def possibleMoves(model: Model, index: Int): LazyList[Model] = {
         val res = Directions.flatMap(d => model.moveEntity(index, d))
-//        if (index > 0 && random.nextBoolean()) random.shuffle(res).take(1)
-//        else
+        if (index > 0 && random.nextBoolean()) random.shuffle(res).take(1)
+        else
             res
     }
 
@@ -71,7 +74,7 @@ object MiniMax {
             val dc = -minDistanceToCandy(model)
             val dg = distanceToGhosts(model)
             val len = -log.length
-            dc + dg + len
+            dc*2 + dg + len
         case ModelState.Win => MaxValue + distanceToGhosts(model) - log.length
         case ModelState.Lose => MinValue + distanceToGhosts(model) - log.length
     }

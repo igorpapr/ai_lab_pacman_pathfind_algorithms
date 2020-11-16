@@ -9,11 +9,17 @@ import scala.concurrent.Future
 
 object Main extends JFXApp {
     val initModel: Model = Model.fullCandies(Model.default)
-    val depth = initModel.ghosts.length+1
+//    val depth = initModel.ghosts.length+1
+    val depth = 6
     val view: View = View(initModel)
     stage = view
     Future {
-        run(initModel)
+        val (log, iterations) = time {run(initModel)}
+        println(s"Total alphabeta calls: $iterations")
+        log.foreach { m =>
+            Thread.sleep(75)
+            Platform.runLater(view.redraw(m))
+        }
     }.recover(e => {
         e.printStackTrace()
         println(e)
@@ -28,23 +34,16 @@ object Main extends JFXApp {
     }
 
     @tailrec
-    def run(model: Model, index: Int = 0): Unit = {
-        if (model.state != ModelState.GoingOn) return
-        val (value, log) = time {
-            MiniMax.alphabeta(model, depth, index)
-        }
+    def run(model: Model, index: Int = 0, totalLog: List[Model] = Nil, iterations: Int = 0): (List[Model], Int) = {
+        if (model.state != ModelState.GoingOn) return totalLog -> iterations
+        val (value, log) = MiniMax.alphabeta(model, depth, index)
         if (log.isEmpty) {
             println("Pacman stuck :(")
-            return
+            return totalLog -> iterations
         }
         val newModel = log.last
         println(value, newModel.state, log.length)
 
-        log.foreach { m =>
-            Thread.sleep(50)
-            Platform.runLater(view.redraw(m))
-        }
-
-        run(newModel, (index + 1) % (model.ghosts.length + 1))
+        run(newModel, (index + 1) % (model.ghosts.length + 1), totalLog ++ log, iterations+1)
     }
 }

@@ -38,6 +38,11 @@ case class Model(desk: Matrix[Cell], pacman: Pacman, ghosts: List[Ghost]) {
     } yield model
 
     def eatCandy: Model = this.copy(desk = desk.updated(pacman.x, pacman.y, Empty))
+
+    def candyUnderPacman: Boolean = {
+        val pxy = MovingEntity.unapply(pacman)
+        desk(pxy) == Candy
+    }
 }
 
 object Model {
@@ -64,7 +69,7 @@ object Model {
         val pacman: Pacman = Pacman(7, 11)
         val ghosts: List[Ghost] =
 //            Ghost(8, 12) ::
-//              Ghost(3, 7) ::
+              Ghost(3, 7) ::
               Nil
         Model(desk, pacman, ghosts)
     }
